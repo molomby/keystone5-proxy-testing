@@ -12,4 +12,9 @@ ALTER TABLE ONLY public."User" ALTER COLUMN id SET DEFAULT nextval('public."User
 ALTER TABLE ONLY public."User" ADD CONSTRAINT "User_pkey" PRIMARY KEY (id);
 
 -- Seed data
-insert into public."User" (email, password) values ('john@thinkmill.com.au', '$2a$12$MzRWYxXmKPhzntxLpiXwk.yMW3ToUqbKJ5a.FjlyxuN29AFnNkEbm');
+insert into public."User" (email, password)
+values (
+	'john@thinkmill.com.au',
+	-- Password is: 'qweqweqwe'
+	'$2a$12$MzRWYxXmKPhzntxLpiXwk.yMW3ToUqbKJ5a.FjlyxuN29AFnNkEbm'
+);

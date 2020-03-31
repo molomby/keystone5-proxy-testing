@@ -2,7 +2,6 @@ const { Keystone } = require('@keystonejs/keystone');
 const { KnexAdapter } = require('@keystonejs/adapter-knex');
 const { GraphQLApp } = require('@keystonejs/app-graphql');
 const { AdminUIApp } = require('@keystonejs/app-admin-ui');
-const { StaticApp } = require('@keystonejs/app-static');
 
 const { Text, Password } = require('@keystonejs/fields');
 const { PasswordAuthStrategy } = require('@keystonejs/auth-password');
@@ -33,15 +32,28 @@ const authStrategy = keystone.createAuthStrategy({
  },
 });
 
+const onHeaders = require('on-headers');
+
 module.exports = {
   keystone,
   apps: [
     new GraphQLApp(),
-    new StaticApp({ path: '/', src: 'public' }),
-
     new AdminUIApp({
       authStrategy,
       enableDefaultRoute: true,
     }),
   ],
+  configureExpress: app => {
+    // Add middleware to add a listener that can access the cookie header before the response is sent
+    app.use((req, res, next) => {
+      onHeaders(res, () => {
+        // Should be an array; let's join it together
+        const headerValue = Array.isArray(res.getHeader('set-cookie')) ? res.getHeader('set-cookie').join(' ') : '';
+        console.log('Set-Cookie response header being set as...\nSet-Cookie: ', headerValue);
+      });
+      next();
+    });
+
+    app.set('trust proxy', true);
+  }
 };

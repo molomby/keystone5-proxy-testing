@@ -1,6 +1,6 @@
 {
   "name": "proxy-test",
-  "description": "Testing the behaviour of Keystone cookies behind reverse proxies",
+  "description": "Testing the behaviour of Keystone 5 secure cookies behind a reverse proxy",
   "private": true,
   "version": "1.0.0",
   "author": "The KeystoneJS Development Team",

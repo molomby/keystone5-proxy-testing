@@ -57,15 +57,17 @@ curl from localhost:
 
 ```sh
 curl 'http://localhost:3000/admin/api' -sD - \
---data-binary '{"query":"mutation { authenticate: authenticateUserWithPassword(email: \"john@thinkmill.com.au\", password: \"qweqweqwe\") { item { id } } }"}' \
-| egrep -i 'set-cookie'
+  -H 'content-type: application/json' \
+  --data-binary '{"query":"mutation { authenticate: authenticateUserWithPassword(email: \"john@thinkmill.com.au\", password: \"qweqweqwe\") { item { id } } }"}'
+#| egrep -i 'set-cookie'
 ```
 
 curl from proxy:
 
 ```sh
 curl 'https://ks5proxytest.local/admin/api' -sD - \
---data-binary '{"query":"mutation { authenticate: authenticateUserWithPassword(email: \"john@thinkmill.com.au\", password: \"qweqweqwe\") { item { id } } }"}' \
---insecure \
-| egrep -i 'set-cookie'
+  -H 'content-type: application/json' \
+  --data-binary '{"query":"mutation { authenticate: authenticateUserWithPassword(email: \"john@thinkmill.com.au\", password: \"qweqweqwe\") { item { id } } }"}'
+  --insecure
+#| egrep -i 'set-cookie'
 ```

@@ -6,6 +6,9 @@ const { AdminUIApp } = require('@keystonejs/app-admin-ui');
 const { Text, Password } = require('@keystonejs/fields');
 const { PasswordAuthStrategy } = require('@keystonejs/auth-password');
 
+console.log('process.env.NODE_ENV: ', process.env.NODE_ENV)
+console.log('process.env.INSECURE_COOKIES: ', process.env.INSECURE_COOKIES)
+
 const keystone = new Keystone({
   name: 'Proxy testing',
   adapter: new KnexAdapter({
@@ -14,6 +17,10 @@ const keystone = new Keystone({
       connection: process.env.DATABASE_URL || 'postgres://localhost/proxy_testing',
     },
   }),
+  secureCookies: process.env.INSECURE_COOKIES ? false : undefined,
+  // cookie: {
+  //   secure: process.env.INSECURE_COOKIES ? false : undefined
+  // }
 });
 
 keystone.createList('User', {
@@ -33,6 +40,8 @@ const authStrategy = keystone.createAuthStrategy({
 });
 
 const onHeaders = require('on-headers');
+const util = require('util');
+const dump = (val) => util.inspect(val, { showHidden: false, depth: null, colors: true });
 
 module.exports = {
   keystone,
@@ -47,9 +56,7 @@ module.exports = {
     // Add middleware to add a listener that can access the cookie header before the response is sent
     app.use((req, res, next) => {
       onHeaders(res, () => {
-        // Should be an array; let's join it together
-        const headerValue = Array.isArray(res.getHeader('set-cookie')) ? res.getHeader('set-cookie').join(' ') : '';
-        console.log('Set-Cookie response header being set as...\nSet-Cookie: ', headerValue);
+        console.log('\nSet-Cookie response header being set as:', dump(res.getHeader('set-cookie')));
       });
       next();
     });
@@ -57,3 +64,4 @@ module.exports = {
     app.set('trust proxy', true);
   }
 };
+
